@@ -1,0 +1,18 @@
+# project config file for RNA preprocessing before somatic mutation calling
+
+# Directory of your aligned RNA-seq data
+sampleDir: /data/input/rna-seq
+# Directory to store your temporary files
+tmpDir: /data/tmp
+# Our framework's working directory: stores all generated folders and files, chooses it with caution (large storage volume)
+workDir: /data/working/RNA_preprocess
+
+# Available num of cores
+cores: 4
+
+# Project-related sequencing data information
+samples: /data/working/sample/RNA-SSNV/rna_preprocess_info.tsv
+# Reference files for RNA-seq data co-cleaning and mutation calling
+ref:
+    # STAR genome directory
+    genome_dir: /data/REF/star_index

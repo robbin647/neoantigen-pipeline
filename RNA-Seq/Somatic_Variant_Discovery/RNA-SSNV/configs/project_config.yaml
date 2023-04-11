@@ -1,0 +1,58 @@
+# Caution: all files and folders should be absolute path which require modifying according to your file system!!!
+
+# Directory of your tumor RNA-seq samles
+sampleDir: /data4/yangtianxia/RNA-SSNV/bam_20230228
+# Directory of your normal RNA-seq samples (in this case same as the tumor)
+normalSampleDir: /data4/yangtianxia/RNA-SSNV/bam_20230228
+# Directory to store your temporary files
+tmpDir: /data4/yangtianxia/tmp
+# Our framework's working directory: stores all generated folders and files, chooses it with caution (large storage volume)
+workDir: /data4/yangtianxia/RNA-SSNV/work_20230411
+
+# Cancer type to analyze
+cancerType: LUAD
+# Available num of cores
+cores: 4
+
+# Softwares involved in our framework
+software:
+    # GATK-4.1.6.0
+    gatk: /data3/yangtianxia/SOFTWARE/RNA-SSNV/software/GATK-4.1.6.0/gatk
+    # GATK-4.2.0.0
+    gatk_new: /data3/yangtianxia/SOFTWARE/RNA-SSNV/software/GATK-4.2.0.0/gatk
+    # GTAK-4.2.6.1
+    gatk_edge: /disk2/workspace/yangtianxia/neoantigen/RNA_SEQ/RNA-SSNV/software/GATK-4.2.6.1/gatk
+    # Picard
+    picard: /apps/software/picard/2.25.1-Java-11/picard.jar
+    # java 11.0.2
+    java: /data1/apps/software/Java/11.0.2/bin/java
+    
+# Project-related sequencing data information
+samples: /data3/yangtianxia/SOFTWARE/RNA-SSNV/tables/project_RNA_somatic_calling_info.tsv
+# Reference files for RNA-seq data co-cleaning and mutation calling
+ref:
+    # bed-format interval file for GENCODE v22 exon regions
+    # change it with your own exon regions of interest
+    # required columns: "chr", "start", "end", "exon_info", "count", "strand"
+    exonInterval: /data3/yangtianxia/SOFTWARE/RNA-SSNV/resources/GRCh38_GENCODE_v22_exon_rm_alt.bed
+    # bed-format interval file for paired-normal Whole Exome Sequence(WES) targets, canonical for all TCGA projects.
+    # change it with your own WES target interval file
+    # required columns: "chr", "start", "end", "target_info", "strand"
+    targetInterval: /data3/yangtianxia/SOFTWARE/RNA-SSNV/resources/whole_exome_agilent_1.1_refseq_plus_3_boosters.targetIntervals_add_chr_to_hg38_rm_alt.bed
+    # reference genome (ss620)
+    genome: /data6/yangtianxia/neoantigen/DATA/GRCh38/GRCh38_hg38.fa
+    # reference variants from public resources
+    variant:
+        # 1000 Human Genome project's SNP file
+        kgSNP: /data3/yangtianxia/SOFTWARE/RNA-SSNV/resources/1000G_phase1.snps.high_confidence.hg38.vcf.gz
+        # 1000 Human Genome project's INDEL file
+        kgINDEL: /data3/yangtianxia/SOFTWARE/RNA-SSNV/resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
+        # gnomad sites file with only AF (allele frequency) info
+        gnomad: /data3/yangtianxia/SOFTWARE/RNA-SSNV/resources/af-only-gnomad.hg38.vcf.gz
+        # gnomad sites file which was selected with chr1 SNP
+        #gnomad_SNP: /data3/yangtianxia/SOFTWARE/RNA-SSNV/resources/af-only-gnomad.GRCh38.SNP_biallelic_chr1_AF_mod.vcf.gz
+        #[debug: switch to use the standard germline variant VCF provided by gatk]
+        gnomad_SNP: /data3/yangtianxia/SOFTWARE/RNA-SSNV/resources/small_exac_common_3.hg38.vcf.gz
+    annotation:
+        # GATK Funcotator's data source
+        gatk_funcotator: /data3/yangtianxia/SOFTWARE/RNA-SSNV/software/funcotator_dataSources.v1.6.20190124s

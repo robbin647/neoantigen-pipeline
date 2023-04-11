@@ -1,0 +1,318 @@
+svg{
+    // width = 1200;height = 920
+    Component {
+        @if(horizonalPart){
+        Container {
+            //gene blocks
+            // Container {
+            //     @if(genecolorpattern){
+            //         @for (geneblock,index) in geneblocks{
+            //             Rect {
+            //                 x = 140 + treewidth;
+            //                 y = getSum(geneblocks,index,"")*(treeheight /childnodeslist.length) + 100
+            //                 width = 230 + geneMaxlen
+            //                 height = geneblock.length* (treeheight /childnodeslist.length) - 1
+            //                 fill = geneBlockcolorfull? geneBlockcolormap[geneblock[0]]:@gradient(geneblock[0])
+            //                 fillOpacity = fillOpacitynum
+            //                 cornerRadius = 3
+            //             }
+            //         }
+            //     }
+            // }
+            Tree{
+                x = 50;y = 100
+                width = treewidth;height = treeheight
+                direction = "right"
+                data = genetree
+                :link(l){
+                    @let isActive = l.tree.isActiveLink(l.link)
+                    Path{
+                        stroke = treeColormap["Link Color"]
+                        fill = "none"
+                        d = l.tree.getPath(...l.pos)
+                    }
+                }
+                :node(n){
+                    Circle.centered {
+                        r = 2
+                        fill = treeColormap["Node Color"]
+                        behavior:tooltip {
+                            content = n.node.data.name + '<br>'
+                        }
+                    }
+                }
+                :leaf(d){
+                    Container {
+                        @if(genecolorpattern){
+                            // @for (geneblock,index) in geneblocks{
+                            // @let spiname = infoData[d.leaf.data.name]["Species"].replace("Lys_pep_need_to_confirm_","").replace("_chosen","").replace(chosenGenesymbol,"")
+                            @let spiname = infoData[d.leaf.data.name]["ID"].replace("Lys_pep_need_to_confirm_","").replace("_chosen","").replace(chosenGenesymbol,"")
+                            @let spigenetext = (co2servermap["server-sci"][spiname] + " / " +co2servermap["server-com"][spiname]).replace(/_/g," ")
+                            @let _fillOpacity = (fillOpacitynum != null) ? fillOpacitynum : (geneBlockcolorfull ? 1 : 0.7)
+
+                            Rect {
+                                x = 10
+                                y = -6
+                                width =  geneMaxlen + 230 + maxproteinlen;height = treeheight/Leaveslist.length
+                                // fill = geneBlockcolormap[infoData[d.leaf.data.name]["Gene_symbol"]]
+                                // fillOpacity = geneBlockcolorfull?1:0.7
+                                fillOpacity = _fillOpacity
+                                // [DEBUG 2023-3-31]
+                                fill = geneBlockcolormap[infoData[d.leaf.data.name]["Gene"]]
+                                // fill = @gradient(infoData[d.leaf.data.name]["Gene_symbol"])
+                                // [DEBUG 2023-3-31]
+                            }
+                            // }
+                        }
+                    }
+                    @if(proteinid_list.indexOf(d.leaf.data.name)!=-1){
+                        // @let proteinid = infoData[d.leaf.data.name]["Protein_ID"]
+                        // @let spiname = infoData[d.leaf.data.name]["Species"].replace("Lys_pep_need_to_confirm_","").replace("_chosen","").replace(chosenGenesymbol,"")
+                        @let spiname = infoData[d.leaf.data.name]["ID"].replace("Lys_pep_need_to_confirm_","").replace("_chosen","").replace(chosenGenesymbol,"")
+                        //@let spitext = infoData[d.leaf.data.name]["Gene_symbol"] + leafSeparator
+                        @let spitext = infoData[d.leaf.data.name]["Gene"] + leafSeparator
+                        // @let spitexto = infoData[d.leaf.data.name]["Gene_symbol"] + leafSeparator
+                        @let spitexto = infoData[d.leaf.data.name]["Gene"] + leafSeparator
+                        Text {
+                            x = 10
+                            y = -4
+                            text = d.leaf.data.name
+                            fontSize = 10
+                            fill = genecolorpattern? getgeneColor(infoData[d.leaf.data.name].gene_symbol):treeColormap["Potein Id Color"]
+                            behavior:tooltip {
+                                // content = "Species: " + infoData[d.leaf.data.name]["Species"].replace("Lys_pep_need_to_confirm_","").replace(/_/g," ").replace("_chosen","") + '<br>' + "Protein Id: "+d.leaf.data.name + '<br>' + "Gene Symbol: " + infoData[d.leaf.data.name]["Gene_symbol"].replace("","")
+                                content = "Id: " + infoData[d.leaf.data.name]["ID"].replace("Lys_pep_need_to_confirm_","").replace(/_/g," ").replace("_chosen","") + '<br>' + "Best Peptide: "+d.leaf.data.name + '<br>' + "Gene: " + infoData[d.leaf.data.name]["Gene"].replace("","")
+                            } 
+                        }
+                        Text {
+                            x = 10 + maxproteinlen
+                            y = -4
+                            text = showgenesymbol? spitext:spitexto
+                            fontSize = 10
+                            fill = genecolorpattern? getgeneColor(infoData[d.leaf.data.name].gene_symbol):treeColormap["Potein Id Color"]
+                            behavior:tooltip {
+                                // content = "Species: " + infoData[d.leaf.data.name]["Species"].replace("Lys_pep_need_to_confirm_","").replace(/_/g," ").replace("_chosen","") + '<br>' + "Protein Id: "+d.leaf.data.name + '<br>' + "Gene Symbol: " + infoData[d.leaf.data.name]["Gene_symbol"].replace("","")
+                                content = "Id: " + infoData[d.leaf.data.name]["ID"].replace("Lys_pep_need_to_confirm_","").replace(/_/g," ").replace("_chosen","") + '<br>' + "Best Peptide: "+d.leaf.data.name + '<br>' + "Gene: " + infoData[d.leaf.data.name]["Gene"].replace("","")
+                            }
+                        }
+                        //@let spigenetext = (co2servermap["server-sci"][spiname] + " / " +co2servermap["server-com"][spiname]).replace(/_/g," ")
+                        //@let spigenetexto = (co2servermap["server-sci"][spiname] + " / " +co2servermap["server-com"][spiname]).replace(/_/g," ")
+                        Text {
+                            x = 10 + geneMaxlen + maxproteinlen
+                            y = -4
+                            //text = showgenesymbol? spigenetext:spigenetexto
+                            text = (spiname.length > 38) ? spiname.substring(0, 38) + "..." : spiname
+                            fontSize = 10
+                            fill = specisColor? colorMap[spiname.replace("Lys_pep_need_to_confirm_","")]:treeColormap["Potein Id Color"]
+                            behavior:tooltip {
+                                // content = "Species: " + infoData[d.leaf.data.name]["Species"].replace("Lys_pep_need_to_confirm_","").replace(/_/g," ").replace("_chosen","") + '<br>' + "Protein Id: "+d.leaf.data.name + '<br>' + "Gene Symbol: " + infoData[d.leaf.data.name]["Gene_symbol"].replace("","")
+                                content = "Id: " + infoData[d.leaf.data.name]["ID"].replace("Lys_pep_need_to_confirm_","").replace(/_/g," ").replace("_chosen","") + '<br>' + "Best Peptide: "+d.leaf.data.name + '<br>' + "Gene: " + infoData[d.leaf.data.name]["Gene"].replace("","")
+                            }
+                        }
+                    }
+                    Container {
+                        @if(showprotein){
+                            Text {
+                                x = 150 + 200 + showTitlelist.indexOf("Protein id")*titlesep + geneMaxlen
+                                text = infoData[d.leaf.data.name]["Best_Peptide"]
+                                fontSize = 10
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
+        Container {
+            x = treewidth + 300 + 204 + geneMaxlen;y = 80
+            @for(item,index) in showTitlelist{
+                Text.centered {
+                    text = item 
+                    x = index*titlesep
+                }
+            }
+        }
+        }
+        @if(radicalPart){
+            Container {
+            // Tree{
+            //     x = treewidth*1.5;y = treewidth*2
+            //     // width = treewidth*2;height = treeheight*2
+            //     r = treewidth
+            //     direction = "radical"
+            //     data = genetree
+            //     :link(l){
+            //         @let isActive = l.tree.isActiveLink(l.link)
+            //         Path{
+            //             stroke = treeColormap["Link Color"]
+            //             fill = "none"
+            //             d = l.tree.getPath(...l.pos)
+            //         }
+            //     }
+            //     :node(n){
+            //         Circle.centered {
+            //             r = 2
+            //             fill = treeColormap["Node Color"]
+            //             behavior:tooltip {
+            //                 content = n.node.data.name + '<br>'
+            //             }
+            //         }
+            //     }
+            //     :leaf(d){
+            //         @if(proteinid_list.indexOf(d.leaf.data.name)!=-1){
+            //             @let spiname = infoData[d.leaf.data.name]["Species"].replace("Lys_pep_need_to_confirm_","").replace("_chosen","").replace(chosenGenesymbol,"")
+            //             @let spitext = infoData[d.leaf.data.name]["Gene_symbol"] + leafSeparator
+            //             @let spitexto = infoData[d.leaf.data.name]["Gene_symbol"] + leafSeparator
+            //             Text {
+            //                 x = isRH? 10:-10
+            //                 y = -4
+            //                 anchor = d.tree.leafAnchor(d.leaf)
+            //                 text = showgenesymbol? spitext:spitexto
+            //                 fontSize = 10
+            //                 fill = genecolorpattern? getgeneColor(infoData[d.leaf.data.name].gene_symbol):treeColormap["Potein Id Color"]
+            //                 behavior:tooltip {
+            //                     content = "Species: " + infoData[d.leaf.data.name]["Species"].replace("Lys_pep_need_to_confirm_","").replace(/_/g," ").replace("_chosen","") + '<br>' + "Protein Id: "+d.leaf.data.name + '<br>' + "Gene Symbol: " + infoData[d.leaf.data.name]["Gene_symbol"].replace("","")
+            //                 }
+            //             }
+            //             @let spigenetext = (co2servermap["server-sci"][spiname] + " / " +co2servermap["server-com"][spiname]).replace(/_/g," ")
+            //             @let spigenetexto = (co2servermap["server-sci"][spiname] + " / " +co2servermap["server-com"][spiname]).replace(/_/g," ")
+            //             @let isRH = d.tree.isRightHalf(d.leaf.x)
+            //             Text {
+            //                 x = isRH? 10 + geneMaxlen : -15-geneMaxlen
+            //                 y = -4
+            //                 anchor = d.tree.leafAnchor(d.leaf)
+            //                 text = showgenesymbol? spigenetext:spigenetexto
+            //                 fontSize = 10
+            //                 fill = specisColor? colorMap[spiname.replace("Lys_pep_need_to_confirm_","")]:treeColormap["Potein Id Color"]
+            //                 behavior:tooltip {
+            //                     content = "Species: " + infoData[d.leaf.data.name]["Species"].replace("Lys_pep_need_to_confirm_","").replace(/_/g," ").replace("_chosen","") + '<br>' + "Protein Id: "+d.leaf.data.name + '<br>' + "Gene Symbol: " + infoData[d.leaf.data.name]["Gene_symbol"].replace("","")
+            //                 }
+            //             }
+            //         }
+            //         Container {
+            //             @if(showprotein){
+            //                 Text {
+            //                     x = 150 + 200 + showTitlelist.indexOf("Protein id")*titlesep + geneMaxlen
+            //                     text = infoData[d.leaf.data.name].protein_id
+            //                     fontSize = 10
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+            // Circle {
+            //     x = radicalR/2 + 230 + geneMaxlen + maxproteinlen + 10;y = radicalR + 230 + geneMaxlen + maxproteinlen + 10
+            //     r = radicalR
+            //     fill = "white"
+            //     stroke = "black"
+                            
+            // }
+            Tree{
+                x = radicalR/2 + 230 + geneMaxlen + maxproteinlen + 10;y = radicalR + 230 + geneMaxlen + maxproteinlen + 10
+                r = radicalR
+                direction = "radical"
+                data = genetree
+                :link(l){
+                    @let isActive = l.tree.isActiveLink(l.link)
+                    Path{
+                        stroke = treeColormap["Link Color"]
+                        fill = "none"
+                        d = l.tree.getPath(...l.pos)
+                    }
+                }
+                :node(n){
+                    Circle.centered {
+                        r = 2
+                        fill = treeColormap["Node Color"]
+                        behavior:tooltip {
+                            content = n.node.data.name + '<br>'
+                        }
+                    }
+                }
+                :leaf(d){
+                    @if(proteinid_list.indexOf(d.leaf.data.name)!=-1){
+                        // @let spiname = infoData[d.leaf.data.name]["Species"].replace("Lys_pep_need_to_confirm_","").replace("_chosen","").replace(chosenGenesymbol,"")
+                        @let spiname = infoData[d.leaf.data.name]["ID"].replace("Lys_pep_need_to_confirm_","").replace("_chosen","").replace(chosenGenesymbol,"")
+                        // @let spitext = infoData[d.leaf.data.name]["Gene_symbol"] + leafSeparator
+                        @let spitext = infoData[d.leaf.data.name]["Gene"] + leafSeparator
+                        // @let spitexto = infoData[d.leaf.data.name]["Gene_symbol"] + leafSeparator
+                        @let spitexto = infoData[d.leaf.data.name]["Gene"] + leafSeparator
+                        @let w = 360/Leaveslist.length
+                        // @let isRH = l.tree.isRightHalf(d.leaf.x)
+                        @let _fillOpacity = (fillOpacitynum != null) ? fillOpacitynum : (geneBlockcolorfull ? 1 : 0.7)
+                        @if(chosenGenesymbol==""){
+                            @if (genecolorpattern){
+                                Arc {
+                                    // x1 = isRH ? 90 - w / 2 : 270 - w / 2
+                                    x1 = isRH ? 90 - w : 270 - w/2
+                                    x2 = isRH ? 90 + w / 2 : 270 + w
+                                    //r1 = -radicalR
+                                    r1 = 0
+                                    r2 = 230 + 10 + geneMaxlen + maxproteinlen
+                                    //[DATA SUBSTITUTION 2023-03-29]fill =  isRH ? @gradient(infoData[d.leaf.data.name]["Gene_symbol"]):@gradient(infoData[d.leaf.data.name]["Gene_symbol"]+"Left")
+                                    // fill =  isRH ? @gradient(infoData[d.leaf.data.name]["Gene"]):@gradient(infoData[d.leaf.data.name]["Gene"]+"Left")
+                                    fillOpacity = _fillOpacity
+                                    fill = geneBlockcolormap[infoData[d.leaf.data.name]["Gene"]]
+                                    // fill = tree.dataOpt.color.get( (Math.log2(value + 1) / Math.log2(tree.dataOpt.Abundance + 1)))
+                                    // fill = tree.dataOpt.color.get( (Math.log2(value) / Math.log2(tree.dataOpt.Abundance)))
+                                    // fill = tree.dataOpt.color.get( value / tree.dataOpt.Abundance )
+                                    // behavior:tooltip {
+                                    //     content = path + "Abundance: " + value + "%"
+                                    // }
+                                    // stroke = isAct ? "red" : "none"
+
+                                } 
+                            }
+                        }
+                         
+                        
+                        Text {
+                            anchor = d.tree.leafAnchor(d.leaf)
+                            x = isRH? 10:-10
+                            y = -4
+                            text = d.leaf.data.name
+                            fontSize = 10
+                            fill = genecolorpattern? getgeneColor(infoData[d.leaf.data.name].gene_symbol):treeColormap["Potein Id Color"]
+                            behavior:tooltip {
+                                // content = "Species: " + infoData[d.leaf.data.name]["Species"].replace("Lys_pep_need_to_confirm_","").replace(/_/g," ").replace("_chosen","") + '<br>' + "Protein Id: "+d.leaf.data.name + '<br>' + "Gene Symbol: " + infoData[d.leaf.data.name]["Gene_symbol"].replace("","")
+                                content = "Id: " + infoData[d.leaf.data.name]["ID"].replace("Lys_pep_need_to_confirm_","").replace(/_/g," ").replace("_chosen","") + '<br>' + "Best Peptide: "+d.leaf.data.name + '<br>' + "Gene: " + infoData[d.leaf.data.name]["Gene"].replace("","")
+                            } 
+                        }
+                        Text {
+                            x = isRH? 10 + maxproteinlen:-10-maxproteinlen
+                            y = -4
+                            anchor = d.tree.leafAnchor(d.leaf)
+                            text = showgenesymbol? spitext:spitexto
+                            fontSize = 10
+                            fill = genecolorpattern? getgeneColor(infoData[d.leaf.data.name].gene_symbol):treeColormap["Potein Id Color"]
+                            behavior:tooltip {
+                                // content = "Species: " + infoData[d.leaf.data.name]["Species"].replace("Lys_pep_need_to_confirm_","").replace(/_/g," ").replace("_chosen","") + '<br>' + "Protein Id: "+d.leaf.data.name + '<br>' + "Gene Symbol: " + infoData[d.leaf.data.name]["Gene_symbol"].replace("","")
+                                content = "Id: " + infoData[d.leaf.data.name]["ID"].replace("Lys_pep_need_to_confirm_","").replace(/_/g," ").replace("_chosen","") + '<br>' + "Best Peptide: "+d.leaf.data.name + '<br>' + "Gene: " + infoData[d.leaf.data.name]["Gene"].replace("","")
+                            }
+                        }
+                        // @let spigenetext = (co2servermap["server-sci"][spiname] + " / " +co2servermap["server-com"][spiname]).replace(/_/g," ")
+                        // @let spigenetexto = (co2servermap["server-sci"][spiname] + " / " +co2servermap["server-com"][spiname]).replace(/_/g," ")
+                        @let isRH = d.tree.isRightHalf(d.leaf.x)
+                        Text {
+                            x = isRH? 10 + geneMaxlen + maxproteinlen : -15-geneMaxlen-maxproteinlen
+                            y = -4
+                            anchor = d.tree.leafAnchor(d.leaf)
+                            // text = showgenesymbol? spigenetext:spigenetexto
+                            text = (spiname.length > 38)? spiname.substring(0,38) + "...":spiname
+                            fontSize = 10
+                            fill = specisColor? colorMap[spiname.replace("Lys_pep_need_to_confirm_","")]:treeColormap["Potein Id Color"]
+                            behavior:tooltip {
+                                // content = "Species: " + infoData[d.leaf.data.name]["Species"].replace("Lys_pep_need_to_confirm_","").replace(/_/g," ").replace("_chosen","") + '<br>' + "Protein Id: "+d.leaf.data.name + '<br>' + "Gene Symbol: " + infoData[d.leaf.data.name]["Gene_symbol"].replace("","")
+                                content = "Id: " + infoData[d.leaf.data.name]["ID"].replace("Lys_pep_need_to_confirm_","").replace(/_/g," ").replace("_chosen","") + '<br>' + "Best Peptide: "+d.leaf.data.name + '<br>' + "Gene: " + infoData[d.leaf.data.name]["Gene"].replace("","")
+                            }
+                        }
+                    }
+                }
+            }
+
+            
+        }
+        }
+
+    }
+}

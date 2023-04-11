@@ -1,0 +1,27 @@
+# project config file for RNA preprocessing before somatic mutation calling
+
+# Directory of your aligned RNA-seq data
+sampleDir: /data6/yangtianxia/RNA
+# Directory to store your temporary files
+tmpDir: /data4/yangtianxia/tmp
+# Our framework's working directory: stores all generated folders and files, chooses it with caution (large storage volume)
+workDir: /data4/yangtianxia/RNA-SSNV/bam_20230411
+
+# Cancer type to analyze
+diseaseType: LUAD
+# Available num of cores
+cores: 4
+
+# Project-related sequencing data information
+samples: /data3/yangtianxia/SOFTWARE/RNA-SSNV/tables/rna_preprocess_info.tsv
+# Reference files for RNA-seq data co-cleaning and mutation calling
+ref:
+    # STAR genome directory
+    genome_dir: /data6/yangtianxia/neoantigen/DATA/star_index_gatk_hg38
+
+
+
+
+
+
+

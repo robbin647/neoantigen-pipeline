@@ -1,0 +1,16 @@
+snakemake==5.10.0
+imbalanced_learn==0.7.0
+joblib==0.14.1
+lime==0.2.0.1
+matplotlib
+numpy
+palettable==3.3.0
+pandas
+portion==2.1.5
+pysam
+PyVCF==0.6.8
+scikit_plot==0.3.7
+scipy
+seaborn==0.9.0
+shap==0.39.0
+statsmodels==0.13.0

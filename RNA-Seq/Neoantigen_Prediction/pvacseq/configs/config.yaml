@@ -1,0 +1,11 @@
+workDir: "/data4/yangtianxia/pvacseq/work_20230318"
+tempDir: "/data4/yangtianxia/TMP"
+sampleTable: "/data3/yangtianxia/SOFTWARE/vep/auto_scripts/tables/sample_table.tsv"
+tools:
+  vep: "/data3/yangtianxia/SOFTWARE/vep/bin/vep"
+  pvacseq: "/data3/yangtianxia/SOFTWARE/vep/bin/pvacseq"
+ref:
+  vep_cache: "/data3/yangtianxia/SOFTWARE/vep/vep_cache"
+  genome_fasta: "/data6/yangtianxia/neoantigen/DATA/GRCh38/GRCh38_hg38.fa"
+  vep_plugin: "/data3/yangtianxia/SOFTWARE/vep/vep_cache/vep_plugin"
+  iedb: "/data3/yangtianxia/SOFTWARE/pvacseq_iedb"

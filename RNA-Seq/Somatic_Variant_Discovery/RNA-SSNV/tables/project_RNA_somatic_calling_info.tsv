@@ -1,0 +1,13 @@
+file_name	file_id	aliquots_id	case_id	sample_type
+OV002-T_R.bam	OV002-T_R	OV002-T_R	OV002	Primary Tumor
+OV002-M_O1.bam	OV002-M_O1	OV002-M_O1	OV002	Solid Tissue Normal
+OV002-M_O1.bam	OV002-M_O1	OV002-M_O1	OV002	Best Normal
+OV003-T_R2.bam	OV003-T_R2	OV003-T_R2	OV003	Primary Tumor
+OV003-M_A.bam	OV003-M_A	OV003-M_A	OV003	Solid Tissue Normal 
+OV003-M_A.bam	OV003-M_A	OV003-M_A	OV003	Best Normal
+OV004-T_R2.bam	OV004-T_R2	OV004-T_R2	OV004	Primary Tumor
+OV004-M_P.bam	OV004-M_P	OV004-M_P	OV004	Solid Tissue Normal
+OV004-M_P.bam	OV004-M_P	OV004-M_P	OV004	Best Normal
+OV005-T_R2.bam	OV005-T_R2	OV005-T_R2	OV005	Primary Tumor
+OV005-M_P.bam	OV005-M_P	OV005-M_P	OV005	Solid Tissue Normal
+OV005-M_P.bam	OV005-M_P	OV005-M_P	OV005	Best Normal

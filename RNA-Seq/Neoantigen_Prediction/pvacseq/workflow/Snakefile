@@ -1,0 +1,120 @@
+
+###
+## Note: Do `conda activate /data3/yangtianxia/SOFTWARE/vep` before running this Snakemake
+##
+###
+import os
+import pandas as pd
+import pdb
+
+workdir: config["workDir"]
+tmpdir: config["tempDir"]
+INPUT_TABLE = pd.read_table(config["sampleTable"]).set_index("sample_id", drop=False)
+INPUT_VCFS = INPUT_TABLE.loc[:,"vcf"]
+if not os.path.exists(os.path.join(config["workDir"], 'vep')):
+    os.mkdir(os.path.join(config["workDir"], 'vep'))
+if not os.path.exists(os.path.join(config["workDir"], 'pvacseq')):
+    os.mkdir(os.path.join(config["workDir"], 'pvacseq'))
+
+def get_tumor_id(vcf_file:str)->str:
+    """
+    Given a vcf file, parse the line starting with "##tumor_sample" and get the tumor sample id
+    """
+    with open(vcf_file, "rt") as vcf:
+        tumor_id = None
+        while True:
+            line = vcf.readline()
+            if line == "":
+                break
+            if line.startswith("##tumor_sample"):
+                tumor_id = line.strip().split("=")[1]
+                return tumor_id
+        if tumor_id is None:
+            raise Exception("Error: No \"##tumor_sample\" line found in your vcf file! ")
+
+def extract_hla_alleles(hla_result: str, sample_id: str):
+    """
+    Read from the spechla result output (hla.result.txt) and list all alleles as a comma-sperarted list
+
+    Return
+    -------------
+    allele_list: list{str}
+        a list of HLA alleles
+    sample_id : str
+        Tumor sample id
+    """
+    allele_list = []
+    hla_table = pd.read_table(hla_result).set_index("Sample", drop=True)
+
+    for allele in hla_table.loc[sample_id, ].to_list():
+        # only take the beginning two sub-alleles e.g. 'A*33:03:01:01' => 'A*33:03'
+        tmp = allele.split(":")
+        if len(tmp) >= 2:
+            allele = ":".join(tmp[:2])
+        allele_list.append(f"HLA-{allele}")
+    return allele_list
+
+rule all:
+    input:
+        expand("vep/{sample_id}/{sample_id}.FilterMutect.vep.vcf", sample_id=INPUT_TABLE.index.values),
+        expand("pvac_seq/{sample_id}/out", sample_id=INPUT_TABLE.index.values)
+
+rule vep:
+    input:
+        vcf = lambda wildcards : INPUT_VCFS[{wildcards.sample_id}]
+    output:
+        vcf = "vep/{sample_id}/{sample_id}.FilterMutect.vep.vcf"
+    params:
+        VEP=config["tools"]["vep"],
+        VEP_CACHE=config["ref"]["vep_cache"],
+        VEP_VERSION="101",
+        VEP_PLUGIN_DIR=config["ref"]["vep_plugin"],
+        REF_FASTA=config["ref"]["genome_fasta"]
+    shell:
+        """
+        {params.VEP} \
+        --input_file {input.vcf} --output_file {output.vcf} \
+        --format vcf --vcf --symbol --terms SO --tsl \
+        --hgvs --assembly GRCh38 --fasta {params.REF_FASTA} \
+        --offline --cache --cache_version {params.VEP_VERSION} --dir {params.VEP_CACHE} --species homo_sapiens --offline \
+        --plugin Frameshift --plugin Wildtype \
+        --dir_plugins {params.VEP_PLUGIN_DIR} \
+        --pick --force_overwrite
+        """
+
+rule pvac_seq:
+    input:
+        vcf = "vep/{sample_id}/{sample_id}.FilterMutect.vep.vcf",
+
+    output:
+        dir = directory("pvac_seq/{sample_id}/out") # must be a directory
+
+    params:
+        pvacseq = config["tools"]["pvacseq"],
+        tumor_sample_id = lambda wildcards : INPUT_TABLE.loc[wildcards.sample_id]["tumor_sample_id"],
+        hla = lambda wildcards : ",".join(extract_hla_alleles(INPUT_TABLE.loc[wildcards.sample_id]["hla"], INPUT_TABLE.loc[wildcards.sample_id]["tumor_sample_id"])),
+        iedb_dir = config["ref"]["iedb"]
+
+    shell:
+        """
+        if [ -d {output.dir} ]; then
+          rm -ef {output.dir};
+        fi
+        {params.pvacseq} run \
+        {input.vcf} \
+        {params.tumor_sample_id} \
+        {params.hla} \
+        NetMHCpan NetMHCIIpan \
+        {output.dir} \
+        -e1 8,9,10,11 \
+        -e2 12,13,14,15,16,17,18 \
+        --pass-only -t 1 \
+        --iedb-install-directory {params.iedb_dir}
+        """
+
+
+
+
+
+
+

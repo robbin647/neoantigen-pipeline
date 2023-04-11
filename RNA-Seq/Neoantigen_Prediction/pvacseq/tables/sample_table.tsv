@@ -1,0 +1,2 @@
+sample_id	vcf	hla	tumor_sample_id
+OV002	/data4/yangtianxia/RNA-SSNV/work_20230321/LUAD/RNA/RNA_somatic_mutation/FilterMutectCalls_new/OV002.vcf	/data4/yangtianxia/spechla/OV002-T_R/spec_hla/OV002-T_R/hla.result.txt	OV002-T_R
